@@ -51,12 +51,17 @@
         return this._super();
       },
       _create:function(){
-        var calendar, interval,
+        var calendar, interval, tempDiv
           that = this;
         
         $.each([ 'onSelect', 'onChangeMonthYear', 'beforeShow' ], function(key, val){
         		that.options[ '_'+val ] = that.options[ val ];
         		that.options[ val ] = function(){
+				if (that.tempDiv!=undefined) {
+				  that.tempDiv.remove();
+				  that.calendar.hide();
+				  that.element.parent().after(that.tempDiv);
+				}
     				var args = arguments;
     				if (val == 'onSelect') {
     					that.element.trigger( "change" );
@@ -80,6 +85,9 @@
         }
 
         this.calendar = calendar;
+
+	this.tempDiv = this.calendar.clone();
+	this.tempDiv.removeAttr("id");
 
         this.baseWidget = ( !this.options.inline )? this.element: this.calendar;
 
@@ -136,6 +144,12 @@
           .find(".ui-datepicker-calendar td" ).addClass("ui-body-"+this.options.theme).end()
           .find(".ui-datepicker-calendar a.ui-state-active").addClass("ui-btn-active").end()
           .find(".ui-datepicker-calendar a.ui-state-highlight").addClass("ui-btn-up-"+this.options.theme).end().find(".ui-state-disabled").css("opacity","1");
+	if (this.tempDiv!=undefined) {
+	  this.tempDiv.hide();
+	  this.calendar.show();
+	  this.tempDiv = this.calendar.clone();
+	  this.tempDiv.removeAttr("id");
+	}
       }
     });
 
